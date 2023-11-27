@@ -1,0 +1,83 @@
+function generateImagesWithDALL_E3() {
+  const apiKey = 'OpenAI API key'; // Replace with your OpenAI API key
+  const sheetId = 'Google Sheet ID'; // Google Sheet ID
+  const folderId = 'Google Drive folder ID'; // Replace with your Google Drive folder ID
+
+  const sheet = SpreadsheetApp.openById(sheetId);
+  const data = sheet.getSheetByName('Sheet1').getDataRange().getValues(); // Assuming data starts from Sheet1
+
+  const maxRowsToProcess = Math.min(data.length, 50);
+  for (let i = 1; i < maxRowsToProcess; i++) {
+    const textToConvert = data[i][0].toString().trim();
+    const revisedPrompt = data[i][1]; // Check if revised prompt already exists in column B
+    const imageLink = data[i][2];
+
+    if (textToConvert && !imageLink && !revisedPrompt) {
+      const openaiEndpoint = 'https://api.openai.com/v1/images/generations';
+
+      const requestData = {
+        model: 'dall-e-3',
+        prompt: textToConvert,
+        n: 1,
+        size: '1024x1024'
+      };
+
+      const payload = {
+        method: 'POST',
+        contentType: 'application/json',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+        muteHttpExceptions: true,
+        payload: JSON.stringify(requestData),
+      };
+
+      const response = UrlFetchApp.fetch(openaiEndpoint, payload);
+
+      if (response.getResponseCode() === 200) {
+        const responseData = JSON.parse(response.getContentText());
+
+        if (responseData.data && responseData.data.length > 0) {
+          const imageUrl = responseData.data[0].url;
+          const revisedPrompt = responseData.data[0].revised_prompt;
+
+          const folder = DriveApp.getFolderById(folderId);
+          const imageBlob = UrlFetchApp.fetch(imageUrl).getBlob();
+
+          // Extract the first five words of the prompt
+          const firstFiveWords = revisedPrompt.split(' ').slice(0, 5).join(' ');
+          const imageFileName = `${firstFiveWords}.png`;
+
+          const imageFile = folder.createFile(imageBlob.setName(imageFileName));
+          const newImageLink = imageFile.getUrl();
+
+          // Set revised prompt in column B as a hyperlink
+          sheet.getSheetByName('Sheet1').getRange(i + 1, 2).setFormula(`=HYPERLINK("${newImageLink}","${firstFiveWords}")`);
+          
+          // Set image Drive link in column C
+          sheet.getSheetByName('Sheet1').getRange(i + 1, 3).setValue(newImageLink);
+
+          Logger.log(`Revised prompt "${firstFiveWords}" added to row ${i + 1}, column B as a hyperlink.`);
+          Logger.log(`Image link "${newImageLink}" added to row ${i + 1}, column C.`);
+
+          Utilities.sleep(10000); // Wait for 10 seconds before proceeding to the next iteration
+        } else {
+          Logger.log(`No image generated for the prompt in row ${i + 1}. Response data: ${JSON.stringify(responseData)}`);
+        }
+      } else {
+        Logger.log(`Error: ${response.getResponseCode()} - ${response.getContentText()}`);
+      }
+    } else if (!textToConvert) {
+      Logger.log(`No text provided in row ${i + 1}. Skipping.`);
+    } else if (revisedPrompt) {
+      Logger.log(`Revised prompt already exists in row ${i + 1}. Skipping image generation.`);
+    }
+  }
+}
+
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('Create Images')
+    .addItem('Generate Images with DALL·E 3', 'generateImagesWithDALL_E3')
+    .addToUi();
+}
