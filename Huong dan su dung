@@ -1,0 +1,43 @@
+
+Yêu cầu:
+
+Khóa API OpenAI: Thay 'OpenAI API key' bằng khóa API OpenAI của bạn.   Bạn cần có tài khoản Openai có gắn thẻ, lấy key tại https://platform.openai.com/api-keys 
+ID Bảng tính Google: Thay 'Google Sheet ID' bằng ID của Bảng tính Google chứa dữ liệu của bạn. 
+Nếu link google sheeet của bạn là :https://docs.google.com/spreadsheets/d/12_iQw5xDG6SYtJj-QBD6sUIs_zK76LmmD4z--ETcZEQ/edit#gid=0 thì ID của sheet là 12_iQw5xDG6SYtJj-QBD6sUIs_zK76LmmD4z--ETcZEQ
+ID Thư mục Google Drive: Thay 'Google Drive folder ID' bằng ID của Thư mục Google Drive nơi bạn muốn lưu trữ hình ảnh được tạo ra. 
+Nếu link folder của bạn là : https://drive.google.com/drive/folders/1M6t771L0oaXYxFTq8D9U74IvenPXAa4U thì folder id là 1M6t771L0oaXYxFTq8D9U74IvenPXAa4U
+
+Hướng dẫn:
+
+Chuẩn bị Bảng tính Google của bạn:
+
+Tạo hoặc mở Bảng tính Google chứa các đề xuất.
+Đảm bảo các đề xuất của bạn nằm trong Cột A và để trống Cột B và Cột C.
+Cột A: Nhập các đề xuất bạn muốn tạo hình ảnh.
+Cột B: (Sẽ được điền tự động) Cột này sẽ chứa siêu liên kết đến các hình ảnh được tạo ra.
+Cột C: (Sẽ được điền tự động) Cột này sẽ chứa liên kết Google Drive đến các hình ảnh đã lưu.
+
+Chèn Code ở Tao anh Dalle vào Bảng tính:
+
+Mở Trình soạn mã trong Bảng tính Google bằng cách điều hướng đến Tiện ích > Script Apps.
+Dán đoạn mã được cung cấp vào trình soạn mã, thay thế các giá trị placeholder bằng khóa API, ID Bảng tính và ID thư mục của bạn.
+Chạy đoạn mã:
+
+Lưu đoạn mã và đóng Trình soạn mã Apps Script.
+Làm mới Bảng tính Google của bạn. Bây giờ bạn sẽ thấy một tùy chọn menu mới có tên Tạo hình ảnh.
+Nhấp vào Tạo hình ảnh, sau đó chọn Tạo hình ảnh với DALL·E 3. Điều này sẽ khởi động quá trình tạo hình ảnh.
+Theo dõi Tiến trình:
+
+Đoạn mã sẽ bắt đầu xử lý các đề xuất trong Bảng của bạn. Nó sẽ tạo hình ảnh cho mỗi đề xuất không có đề xuất đã sửa đổi trong Cột B và liên kết hình ảnh trong Cột C.
+Tiến trình có thể được theo dõi thông qua các logs. Kiểm tra menu Xem > Logs trong trình soạn mã để xem chi tiết về việc thực thi mã.
+Kết quả đã Tạo:
+
+Đoạn mã sẽ điền siêu liên kết đến các hình ảnh đã tạo vào Cột B.
+Cột C sẽ chứa liên kết trực tiếp đến các hình ảnh được lưu trong Google Drive.
+Điều chỉnh (nếu cần thiết):
+
+Bạn có thể sửa đổi đoạn mã theo yêu cầu cụ thể của bạn bằng cách thay đổi các tham số như số lượng hàng tối đa để xử lý, thời gian chờ giữa các vòng lặp, v.v.
+Chạy Lại đoạn mã:
+
+Nếu bạn cần tạo thêm hình ảnh hoặc cập nhật đề xuất hiện có, bạn có thể chạy lại đoạn mã bằng cách làm theo các bước 3 và 4.
+Hãy nhớ đảm bảo rằng các quyền của Bảng tính Google và Google Drive của bạn được cài đặt đúng để cho phép đoạn mã đọc từ và ghi vào các vị trí tương ứng. Vui lòng thay thế văn bản placeholder ('OpenAI API key', 'Google Sheet ID', 'Google Drive folder ID') bằng thông tin xác thực thực của bạn để cho phép đoạn mã hoạt động chính xác.
